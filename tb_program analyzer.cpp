@@ -12,15 +12,15 @@ int main(){
     int order[2][100];
     char *p;
 
-	if((fp=fopen("Input.txt","r"))==NULL){   /*以只读打开输入文件*/ /*Input文件必须以回车或空格结尾*/
+	if((fp=fopen("Input.txt","r"))==NULL){   /*Open input file as read-only*/ /*Input.txt must end with a space or \n*/
 		printf("OPEN ERROR");
 		exit(0);
 	}
-	while(fgets(buf1[h],21,fp)!=NULL){   /*将输入文件逐行放入一个二维数组*/
+	while(fgets(buf1[h],21,fp)!=NULL){   /*Put the input file line by line into a 2D matrix*/
 		len=strlen(buf1[h]);
 		buf1[h][len-1]='\0';
-		strcpy(buf3[h],buf1[h]);    /*将导入完全的数组整个拷贝到另一数组以备后用*/
-		p=strtok(buf1[h]," ");    /*将各行号单独取出并按输入顺序放入一个二维数组*/
+		strcpy(buf3[h],buf1[h]);
+		p=strtok(buf1[h]," ");
 		strncpy(temp,p,4);
 		for(j=0;j<strlen(temp);j++){
 			num=num*10+temp[j]-'0';
@@ -31,7 +31,7 @@ int main(){
 		h++;
 	}
 	a=0;
-	for(i=0;i<h-1;i++){    /*将行号从小到大排序*/
+	for(i=0;i<h-1;i++){    /*Sort line numbers from smallest to largest*/
 		for(j=i+1;j<h;j++){
 			if(order[1][i]>order[1][j]){
 				num=order[1][i];
@@ -43,13 +43,13 @@ int main(){
 			}
 		}
 	}
-	for(i=0;i<h;i++){    /*将含完整TB语句的数组按行号大小顺序排列到另一新的数组buf2中*/
+	for(i=0;i<h;i++){    /*Arrange the array containing the complete TB statement into another new array buf2 in line number order*/
 		a=order[0][i];
 		strcpy(buf2[i],buf3[a]);
 	}
 	a=0;
 	
-	for(i=0;i<h;i++){    /*除去buf2中每行的行号和全部空格*/
+	for(i=0;i<h;i++){    /*Remove line numbers and all spaces from each line in buf2*/
 		p=strtok(buf2[i]," ");
 		p=strtok(NULL," ");
 		strcpy(temp,p);
@@ -61,17 +61,18 @@ int main(){
 		strcpy(buf3[i],temp);
 	}
 	
-	for(i=0;i<h;i++){    /*分析程序*/
-		if(count>4000){    /*如果程序陷入死循环则输出-1*/
+	for(i=0;i<h;i++){    /*Analysis program*/
+		if(count>4000){    /*Output -1 if the program is stuck in an infinite loop*/
 			F=-1;
 			break;
 		}
-		if(buf3[i][0]=='E'&&buf3[i][1]=='N'&&buf3[i][2]=='D'){    /*遇到END语句结束程序*/
+		if(buf3[i][0]=='E'&&buf3[i][1]=='N'&&buf3[i][2]=='D'){    /*End the program with an END statement*/
 			count++;
 			break;
 		}
 		else if(buf3[i][0]=='I'&&buf3[i][1]=='F'){
-			if(letter==0){    /*确认条件语句中涉及的变量对应前面出现过的哪个变量，如是新出现的变量则赋值为0并放入保存变量的数组中*/
+			if(letter==0){    /*Confirm that the variable involved in the conditional statement corresponds to which variable that has appeared before.
+					    If it is a new variable, assign it to 0 and put it into the array that saves the variable.*/
 				change[0]=buf3[i][2];
 				number[0]=0;
 				letter++;
@@ -91,21 +92,21 @@ int main(){
 			}
 			j=4;
 			a=0;
-			while(buf3[i][j]>='0'&&buf3[i][j]<='9'){    /*计算整数的位数*/
+			while(buf3[i][j]>='0'&&buf3[i][j]<='9'){    /*Count the digits of an integer*/
 				a++;
 				j++;
 			}
-			num=0;    /*计算整数的值*/
+			num=0;    /*Calculate the value of an integer*/
 			for(j=4;j<a+4;j++){
 				num=num*10+buf3[i][j]-'0';
 			}
-			if(buf3[i][j]!='G'){    /*若为非法语句则输出-1*/
+			if(buf3[i][j]!='G'){    /*If it is an illegal statement, output -1*/
 			    F=-1;
 			    break;
 			}
 			a=0;
 			j+=2;
-			if(num==number[k]){    /*如果整数与变量值相等，则跳转到GO后所写的行号*/
+			if(num==number[k]){    /*If the integer is equal to the variable value, jump to the line number written after GO*/
 				num=0;
 				while(buf3[i][j]>='0'&&buf3[i][j]<='9'){
 					num=num*10+buf3[i][j]-'0';
@@ -124,7 +125,7 @@ int main(){
 		    	count++;
 		    	continue;
 			}
-			else{    /*否则继续按行号分析程序*/
+			else{    /*Otherwise continue to parse the program by line number*/
 				count++;
 			}			
 		}
@@ -135,11 +136,11 @@ int main(){
 				num=num*10+buf3[i][j]-'0';
 				j++;
 			}
-			if(buf3[i][j]!='\0'){    /*若为非法语句则输出-1*/
+			if(buf3[i][j]!='\0'){    /*If it is an illegal statement, output -1*/
 			   	F=-1;
 			   	break;
 			}
-			for(j=0;j<h;j++){    /*在保存行号的数组中找到相应行并跳转*/
+			for(j=0;j<h;j++){    /*Find the corresponding line in the array holding the line number and jump*/
 				if(order[1][j]==num){
 					i=j-1;
 					break;
@@ -184,7 +185,7 @@ int main(){
 					num=num*10+buf3[i][j]-'0';
 					j++;
 				}
-			    if(buf3[i][j]!='\0'){    /*若为非法语句则输出-1*/
+			    if(buf3[i][j]!='\0'){    /*If it is an illegal statement, output -1*/
 			    	F=-1;
 			    	break;
 				}
@@ -198,14 +199,14 @@ int main(){
 					num=num*10+buf3[i][j]-'0';
 					j++;
 				}
-			    if(buf3[i][j]!='\0'){    /*若为非法语句则输出-1*/
+			    if(buf3[i][j]!='\0'){    /*If it is an illegal statement, output -1*/
 			    	F=-1;
 			    	break;
 				}
 				number[k]-=num;
 				count++;
 			}
-			else{    /*非法语句，输出-1*/
+			else{    /*An illegal statement, output -1*/
 				F=-1;
 				break;
 			} 
@@ -215,10 +216,10 @@ int main(){
 		printf("SAVE ERROR");
 		exit(0);
 	}
-	if(F==-1){    /*若有非法输入则输出-1*/
+	if(F==-1){    /*If it is an illegal input, output -1*/
 		fprintf(fp,"%d\n",F);
 	}
-	else{    /*程序正常结束则保存TB程序输出结果*/ 
+	else{    /*If the program ends normally, save the output result of the TB program*/ 
 		for(i=0;i<count2;i++)
 		    fprintf(fp,"%d\n",output[i]);
 	}
